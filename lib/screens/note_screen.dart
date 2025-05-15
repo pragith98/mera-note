@@ -132,27 +132,28 @@ class _NoteScreenState extends State<NoteScreen> {
             const SizedBox(height: 16),
             BlocBuilder<CategoriesBloc, CategoriesState>(
               builder: (context, state) {
-                if (state is CategoriesLoaded) {
-                  return DropdownButtonFormField<String>(
-                    value: _selectedCategoryId,
-                    decoration: const InputDecoration(
-                      labelText: 'Category',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: state.categories.map((category) {
-                      return DropdownMenuItem(
-                        value: category.id,
-                        child: Text(category.name),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCategoryId = value;
-                      });
-                    },
-                  );
+                if (state is! CategoriesLoadedState) {
+                  return const SizedBox.shrink();
                 }
-                return const SizedBox.shrink();
+                return DropdownButtonFormField<String>(
+                  value: _selectedCategoryId,
+                  decoration: const InputDecoration(
+                    labelText: 'Category',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: state.categories.map((category) {
+                    return DropdownMenuItem(
+                      value: category.id,
+                      child: Text(category.name),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCategoryId = value;
+                    });
+                  },
+                );
+                
               },
             ),
             const SizedBox(height: 16),

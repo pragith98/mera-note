@@ -8,31 +8,31 @@ abstract class CategoriesState extends Equatable {
   List<Object?> get props => [];
 }
 
-class CategoriesInitial extends CategoriesState {}
+class CategoriesInitialState extends CategoriesState { }
 
-class CategoriesLoading extends CategoriesState {}
+class CategoriesLoadingState extends CategoriesState { }
 
-class CategoriesLoaded extends CategoriesState {
+class CategoriesLoadedState extends CategoriesState {
   final List<Category> categories;
 
-  const CategoriesLoaded({required this.categories});
+  const CategoriesLoadedState({required this.categories});
 
   @override
   List<Object?> get props => [categories];
 
-  CategoriesLoaded copyWith({
+  CategoriesLoadedState copyWith({
     List<Category>? categories,
   }) {
-    return CategoriesLoaded(
+    return CategoriesLoadedState(
       categories: categories ?? this.categories,
     );
   }
 }
 
-class CategoriesError extends CategoriesState {
+class CategoriesErrorState extends CategoriesState {
   final String message;
 
-  const CategoriesError(this.message);
+  const CategoriesErrorState(this.message);
 
   @override
   List<Object?> get props => [message];

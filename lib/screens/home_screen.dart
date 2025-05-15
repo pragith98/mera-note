@@ -58,44 +58,44 @@ class HomeScreen extends StatelessWidget {
   Widget _buildCategoryFilter(BuildContext context) {
     return BlocBuilder<CategoriesBloc, CategoriesState>(
       builder: (context, state) {
-        if (state is CategoriesLoaded) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              children: [
-                FilterChip(
-                  label: const Text('All'),
-                  selected: context.watch<NotesBloc>().state is NotesLoaded &&
-                      (context.watch<NotesBloc>().state as NotesLoaded)
-                          .selectedCategoryId ==
-                          null,
-                  onSelected: (_) => context
-                      .read<NotesBloc>()
-                      .add(const FilterNotesByCategory('')),
-                ),
-                const SizedBox(width: 8),
-                ...state.categories.map(
-                  (category) => Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: FilterChip(
-                      label: Text(category.name),
-                      selected: context.watch<NotesBloc>().state is NotesLoaded &&
-                          (context.watch<NotesBloc>().state as NotesLoaded)
-                              .selectedCategoryId ==
-                              category.id,
-                      onSelected: (_) => context
-                          .read<NotesBloc>()
-                          .add(FilterNotesByCategory(category.id)),
-                      onDeleted: () => _showCategoryDialog(context, category),
-                    ),
+        if (state is! CategoriesLoadedState) { 
+          return const SizedBox.shrink();
+        }
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            children: [
+              FilterChip(
+                label: const Text('All'),
+                selected: context.watch<NotesBloc>().state is NotesLoaded &&
+                    (context.watch<NotesBloc>().state as NotesLoaded)
+                        .selectedCategoryId ==
+                        null,
+                onSelected: (_) => context
+                    .read<NotesBloc>()
+                    .add(const FilterNotesByCategory('')),
+              ),
+              const SizedBox(width: 8),
+              ...state.categories.map(
+                (category) => Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: FilterChip(
+                    label: Text(category.name),
+                    selected: context.watch<NotesBloc>().state is NotesLoaded &&
+                        (context.watch<NotesBloc>().state as NotesLoaded)
+                            .selectedCategoryId ==
+                            category.id,
+                    onSelected: (_) => context
+                        .read<NotesBloc>()
+                        .add(FilterNotesByCategory(category.id)),
+                    onDeleted: () => _showCategoryDialog(context, category),
                   ),
                 ),
-              ],
-            ),
-          );
-        }
-        return const SizedBox.shrink();
+              ),
+            ],
+          ),
+        );
       },
     );
   }
@@ -216,7 +216,7 @@ class HomeScreen extends StatelessWidget {
 
     if (confirmed == true) {
       if (context.mounted) {
-        context.read<CategoriesBloc>().add(DeleteCategory(category.id));
+        context.read<CategoriesBloc>().add(DeleteCategoryEvent(category.id));
         Navigator.pop(context); // Close the edit dialog
       }
     }
@@ -273,7 +273,7 @@ class HomeScreen extends StatelessWidget {
               if (controller.text.isNotEmpty) {
                 if (category == null) {
                   context.read<CategoriesBloc>().add(
-                        AddCategory(
+                        AddCategoryEvent(
                           Category(
                             name: controller.text,
                             color: colorController.text.isNotEmpty
@@ -284,7 +284,7 @@ class HomeScreen extends StatelessWidget {
                       );
                 } else {
                   context.read<CategoriesBloc>().add(
-                        UpdateCategory(
+                        UpdateCategoryEvent(
                           category.copyWith(
                             name: controller.text,
                             color: colorController.text.isNotEmpty

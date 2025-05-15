@@ -7,58 +7,65 @@ import 'categories_state.dart';
 class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
   final Box<Category> categoriesBox;
 
-  CategoriesBloc({required this.categoriesBox}) : super(CategoriesInitial()) {
+  CategoriesBloc({required this.categoriesBox}) : super(CategoriesInitialState()) {
     on<LoadCategories>(_onLoadCategories);
-    on<AddCategory>(_onAddCategory);
-    on<UpdateCategory>(_onUpdateCategory);
-    on<DeleteCategory>(_onDeleteCategory);
+    on<AddCategoryEvent>(_onAddCategory);
+    on<UpdateCategoryEvent>(_onUpdateCategory);
+    on<DeleteCategoryEvent>(_onDeleteCategory);
   }
 
-  void _onLoadCategories(LoadCategories event, Emitter<CategoriesState> emit) {
-    emit(CategoriesLoading());
+  void _onLoadCategories(
+    LoadCategories event, 
+    Emitter<CategoriesState> emit
+  ) {
+    emit(CategoriesLoadingState());
     try {
       final categories = categoriesBox.values.toList();
-      emit(CategoriesLoaded(categories: categories));
+      emit(CategoriesLoadedState(categories: categories));
     } catch (e) {
-      emit(CategoriesError(e.toString()));
+      emit(CategoriesErrorState(e.toString()));
     }
   }
 
-  void _onAddCategory(AddCategory event, Emitter<CategoriesState> emit) async {
-    final currentState = state;
-    if (currentState is CategoriesLoaded) {
-      try {
-        await categoriesBox.put(event.category.id, event.category);
-        emit(CategoriesLoaded(categories: categoriesBox.values.toList()));
-      } catch (e) {
-        emit(CategoriesError(e.toString()));
-      }
+  void _onAddCategory(
+    AddCategoryEvent event, 
+    Emitter<CategoriesState> emit
+  ) async {
+    if (state is! CategoriesLoadedState) return;
+    
+    try {
+      await categoriesBox.put(event.category.id, event.category);
+      emit(CategoriesLoadedState(categories: categoriesBox.values.toList()));
+    } catch (e) {
+      emit(CategoriesErrorState(e.toString()));
     }
   }
 
   void _onUpdateCategory(
-      UpdateCategory event, Emitter<CategoriesState> emit) async {
-    final currentState = state;
-    if (currentState is CategoriesLoaded) {
-      try {
-        await categoriesBox.put(event.category.id, event.category);
-        emit(CategoriesLoaded(categories: categoriesBox.values.toList()));
-      } catch (e) {
-        emit(CategoriesError(e.toString()));
-      }
+    UpdateCategoryEvent event, 
+    Emitter<CategoriesState> emit
+  ) async {
+    if (state is! CategoriesLoadedState) return;
+
+    try {
+      await categoriesBox.put(event.category.id, event.category);
+      emit(CategoriesLoadedState(categories: categoriesBox.values.toList()));
+    } catch (e) {
+      emit(CategoriesErrorState(e.toString()));
     }
   }
 
   void _onDeleteCategory(
-      DeleteCategory event, Emitter<CategoriesState> emit) async {
-    final currentState = state;
-    if (currentState is CategoriesLoaded) {
-      try {
-        await categoriesBox.delete(event.categoryId);
-        emit(CategoriesLoaded(categories: categoriesBox.values.toList()));
-      } catch (e) {
-        emit(CategoriesError(e.toString()));
-      }
+    DeleteCategoryEvent event, 
+    Emitter<CategoriesState> emit
+  ) async {
+    if (state is! CategoriesLoadedState) return;
+    
+    try {
+      await categoriesBox.delete(event.categoryId);
+      emit(CategoriesLoadedState(categories: categoriesBox.values.toList()));
+    } catch (e) {
+      emit(CategoriesErrorState(e.toString()));
     }
   }
 } 

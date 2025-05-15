@@ -1,38 +1,20 @@
-import 'package:equatable/equatable.dart';
 import '../../models/category.dart';
 
-abstract class CategoriesEvent extends Equatable {
-  const CategoriesEvent();
-
-  @override
-  List<Object?> get props => [];
-}
+abstract class CategoriesEvent { }
 
 class LoadCategories extends CategoriesEvent {}
 
-class AddCategory extends CategoriesEvent {
+class AddCategoryEvent extends CategoriesEvent {
   final Category category;
-
-  const AddCategory(this.category);
-
-  @override
-  List<Object?> get props => [category];
+  AddCategoryEvent(this.category);
 }
 
-class UpdateCategory extends CategoriesEvent {
+class UpdateCategoryEvent extends CategoriesEvent {
   final Category category;
-
-  const UpdateCategory(this.category);
-
-  @override
-  List<Object?> get props => [category];
+  UpdateCategoryEvent(this.category);
 }
 
-class DeleteCategory extends CategoriesEvent {
+class DeleteCategoryEvent extends CategoriesEvent {
   final String categoryId;
-
-  const DeleteCategory(this.categoryId);
-
-  @override
-  List<Object?> get props => [categoryId];
-} 
+  DeleteCategoryEvent(this.categoryId);
+}
