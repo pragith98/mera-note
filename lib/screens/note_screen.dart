@@ -60,7 +60,7 @@ class _NoteScreenState extends State<NoteScreen> {
 
     if (confirmed == true) {
       if (context.mounted) {
-        context.read<NotesBloc>().add(DeleteNote(widget.note!.id));
+        context.read<NotesBloc>().add(DeleteNoteEvent(widget.note!.id));
         Navigator.pop(context); // Return to previous screen
       }
     }
@@ -93,9 +93,9 @@ class _NoteScreenState extends State<NoteScreen> {
         );
 
     if (widget.note == null) {
-      context.read<NotesBloc>().add(AddNote(note));
+      context.read<NotesBloc>().add(AddNoteEvent(note));
     } else {
-      context.read<NotesBloc>().add(UpdateNote(note));
+      context.read<NotesBloc>().add(UpdateNoteEvent(note));
     }
 
     Navigator.pop(context);

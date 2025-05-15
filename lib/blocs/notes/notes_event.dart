@@ -1,47 +1,31 @@
-import 'package:equatable/equatable.dart';
 import '../../models/note.dart';
 
-abstract class NotesEvent extends Equatable {
+abstract class NotesEvent {
   const NotesEvent();
-
-  @override
-  List<Object?> get props => [];
 }
 
-class LoadNotes extends NotesEvent {}
+class LoadNotesEvent extends NotesEvent {}
 
-class AddNote extends NotesEvent {
+class AddNoteEvent extends NotesEvent {
   final Note note;
 
-  const AddNote(this.note);
-
-  @override
-  List<Object?> get props => [note];
+  const AddNoteEvent(this.note);
 }
 
-class UpdateNote extends NotesEvent {
+class UpdateNoteEvent extends NotesEvent {
   final Note note;
 
-  const UpdateNote(this.note);
-
-  @override
-  List<Object?> get props => [note];
+  const UpdateNoteEvent(this.note);
 }
 
-class DeleteNote extends NotesEvent {
+class DeleteNoteEvent extends NotesEvent {
   final String noteId;
 
-  const DeleteNote(this.noteId);
-
-  @override
-  List<Object?> get props => [noteId];
+  const DeleteNoteEvent(this.noteId);
 }
 
-class FilterNotesByCategory extends NotesEvent {
+class FilterNotesByCategoryEvent extends NotesEvent {
   final String categoryId;
 
-  const FilterNotesByCategory(this.categoryId);
-
-  @override
-  List<Object?> get props => [categoryId];
+  const FilterNotesByCategoryEvent(this.categoryId);
 } 

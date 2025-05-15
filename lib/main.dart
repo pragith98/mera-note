@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<NotesBloc>(
-          create: (context) => NotesBloc(notesBox: notesBox)..add(LoadNotes()),
+          create: (context) => NotesBloc(notesBox: notesBox)..add(LoadNotesEvent()),
         ),
         BlocProvider<CategoriesBloc>(
           create: (context) =>

@@ -8,15 +8,15 @@ abstract class NotesState extends Equatable {
   List<Object?> get props => [];
 }
 
-class NotesInitial extends NotesState {}
+class NotesInitialState extends NotesState {}
 
-class NotesLoading extends NotesState {}
+class NotesLoadingState extends NotesState {}
 
-class NotesLoaded extends NotesState {
+class NotesLoadedState extends NotesState {
   final List<Note> notes;
   final String? selectedCategoryId;
 
-  const NotesLoaded({
+  const NotesLoadedState({
     required this.notes,
     this.selectedCategoryId,
   });
@@ -24,21 +24,21 @@ class NotesLoaded extends NotesState {
   @override
   List<Object?> get props => [notes, selectedCategoryId];
 
-  NotesLoaded copyWith({
+  NotesLoadedState copyWith({
     List<Note>? notes,
     String? selectedCategoryId,
   }) {
-    return NotesLoaded(
+    return NotesLoadedState(
       notes: notes ?? this.notes,
       selectedCategoryId: selectedCategoryId ?? this.selectedCategoryId,
     );
   }
 }
 
-class NotesError extends NotesState {
+class NotesErrorState extends NotesState {
   final String message;
 
-  const NotesError(this.message);
+  const NotesErrorState(this.message);
 
   @override
   List<Object?> get props => [message];

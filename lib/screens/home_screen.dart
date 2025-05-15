@@ -68,13 +68,13 @@ class HomeScreen extends StatelessWidget {
             children: [
               FilterChip(
                 label: const Text('All'),
-                selected: context.watch<NotesBloc>().state is NotesLoaded &&
-                    (context.watch<NotesBloc>().state as NotesLoaded)
+                selected: context.watch<NotesBloc>().state is NotesLoadedState &&
+                    (context.watch<NotesBloc>().state as NotesLoadedState)
                         .selectedCategoryId ==
                         null,
                 onSelected: (_) => context
                     .read<NotesBloc>()
-                    .add(const FilterNotesByCategory('')),
+                    .add(const FilterNotesByCategoryEvent('')),
               ),
               const SizedBox(width: 8),
               ...state.categories.map(
@@ -82,13 +82,13 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 8.0),
                   child: FilterChip(
                     label: Text(category.name),
-                    selected: context.watch<NotesBloc>().state is NotesLoaded &&
-                        (context.watch<NotesBloc>().state as NotesLoaded)
+                    selected: context.watch<NotesBloc>().state is NotesLoadedState &&
+                        (context.watch<NotesBloc>().state as NotesLoadedState)
                             .selectedCategoryId ==
                             category.id,
                     onSelected: (_) => context
                         .read<NotesBloc>()
-                        .add(FilterNotesByCategory(category.id)),
+                        .add(FilterNotesByCategoryEvent(category.id)),
                     onDeleted: () => _showCategoryDialog(context, category),
                   ),
                 ),
@@ -103,9 +103,9 @@ class HomeScreen extends StatelessWidget {
   Widget _buildNotesList(BuildContext context) {
     return BlocBuilder<NotesBloc, NotesState>(
       builder: (context, state) {
-        if (state is NotesLoading) {
+        if (state is NotesLoadingState) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is NotesLoaded) {
+        } else if (state is NotesLoadedState) {
           if (state.notes.isEmpty) {
             return const Center(
               child: Text('No notes yet. Create one by tapping the + button.'),
@@ -118,7 +118,7 @@ class HomeScreen extends StatelessWidget {
               return _buildNoteCard(context, note);
             },
           );
-        } else if (state is NotesError) {
+        } else if (state is NotesErrorState) {
           return Center(child: Text(state.message));
         }
         return const SizedBox.shrink();
@@ -256,7 +256,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 if (context.mounted) {
                   final notesState = context.read<NotesBloc>().state;
-                  if (notesState is NotesLoaded) {
+                  if (notesState is NotesLoadedState) {
                     _showDeleteConfirmation(context, category, notesState.notes);
                   }
                 }
