@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:mera_note/blocs/categories/categories_bloc.dart';
 import 'package:mera_note/blocs/categories/categories_event.dart';
 import 'package:mera_note/blocs/notes/notes_bloc.dart';
 import 'package:mera_note/blocs/notes/notes_state.dart';
+import 'package:mera_note/helpers/hex_color_helper.dart';
 import 'package:mera_note/models/category.dart';
 import 'package:mera_note/models/note.dart';
 import 'package:mera_note/services/alert_service.dart';
+import 'package:mera_note/widgets/color_picker_form_field.dart';
 import 'package:mera_note/widgets/delete_confirmation.dart';
 
 class CategoryForm extends StatefulWidget {
@@ -19,12 +22,16 @@ class CategoryForm extends StatefulWidget {
 
 class _CategoryFormState extends State<CategoryForm> {
   late TextEditingController _nameController;
-  late TextEditingController _colorController;
+  Color _categoryColor = Colors.blue;
+
+  String _colorToHex(Color color) => colorToHex(color);
 
   @override
   void initState() {
     _nameController = TextEditingController(text: widget.category?.name);
-    _colorController = TextEditingController(text: widget.category?.color);
+    if (widget.category?.color != null) {
+      _categoryColor = HexColorHelper(widget.category!.color.toString());
+    }
     super.initState();
   }
 
@@ -84,12 +91,9 @@ class _CategoryFormState extends State<CategoryForm> {
             ),
           ),
           const SizedBox(height: 16),
-          TextField(
-            controller: _colorController,
-            decoration: const InputDecoration(
-              labelText: 'Color (optional)',
-              hintText: 'Enter color hex code',
-            ),
+          ColorPickerFormField(
+            initialColor: _categoryColor,
+            onColorChanged: (color) => _categoryColor = color,
           ),
         ],
       ),
@@ -119,10 +123,7 @@ class _CategoryFormState extends State<CategoryForm> {
                   AddCategoryEvent(
                     Category(
                       name: _nameController.text,
-                      color:
-                          _colorController.text.isNotEmpty
-                              ? _colorController.text
-                              : null,
+                      color: _colorToHex(_categoryColor),
                     ),
                   ),
                 );
@@ -131,10 +132,7 @@ class _CategoryFormState extends State<CategoryForm> {
                   UpdateCategoryEvent(
                     widget.category!.copyWith(
                       name: _nameController.text,
-                      color:
-                          _colorController.text.isNotEmpty
-                              ? _colorController.text
-                              : null,
+                      color: _colorToHex(_categoryColor),
                     ),
                   ),
                 );

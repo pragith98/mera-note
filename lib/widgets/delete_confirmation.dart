@@ -32,6 +32,7 @@ class DeleteConfirmation extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
                   child: Text("Yes, Delete it"),
                 ),
               ],

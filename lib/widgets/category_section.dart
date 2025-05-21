@@ -5,6 +5,7 @@ import 'package:mera_note/blocs/categories/categories_state.dart';
 import 'package:mera_note/blocs/notes/notes_bloc.dart';
 import 'package:mera_note/blocs/notes/notes_event.dart';
 import 'package:mera_note/blocs/notes/notes_state.dart';
+import 'package:mera_note/helpers/hex_color_helper.dart';
 import 'package:mera_note/models/category.dart';
 import 'package:mera_note/widgets/category_form.dart';
 
@@ -56,6 +57,8 @@ class _CategorySectionState extends State<CategorySection> {
                   padding: const EdgeInsets.only(right: 8.0),
                   child: FilterChip(
                     label: Text(category.name),
+                    deleteIconColor: HexColorHelper(category.color.toString()),
+                    deleteIcon: Icon(Icons.tour_sharp),
                     selected:
                         context.watch<NotesBloc>().state is NotesLoadedState &&
                         (context.watch<NotesBloc>().state as NotesLoadedState)

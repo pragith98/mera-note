@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mera_note/helpers/hex_color_helper.dart';
 import 'package:mera_note/services/alert_service.dart';
 import 'package:mera_note/widgets/delete_confirmation.dart';
 import '../blocs/notes/notes_bloc.dart';
@@ -135,7 +136,23 @@ class _NoteScreenState extends State<NoteScreen> {
                       state.categories.map((category) {
                         return DropdownMenuItem(
                           value: category.id,
-                          child: Text(category.name),
+                          child: Row(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.symmetric(horizontal: 5),
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  color: HexColorHelper(category.color.toString()),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                ),
+                              ),
+                              Text(category.name),
+                            ],
+                          ),
                         );
                       }).toList(),
                   onChanged: (value) {
