@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mera_note/services/alert_service.dart';
+import 'package:mera_note/widgets/delete_confirmation.dart';
 import '../blocs/notes/notes_bloc.dart';
 import '../blocs/notes/notes_event.dart';
 import '../blocs/categories/categories_bloc.dart';
@@ -9,10 +11,7 @@ import '../models/note.dart';
 class NoteScreen extends StatefulWidget {
   final Note? note;
 
-  const NoteScreen({
-    super.key,
-    this.note,
-  });
+  const NoteScreen({super.key, this.note});
 
   @override
   State<NoteScreen> createState() => _NoteScreenState();
@@ -38,30 +37,23 @@ class _NoteScreenState extends State<NoteScreen> {
     super.dispose();
   }
 
-  Future<void> _showDeleteConfirmation() async {
-    final confirmed = await showDialog<bool>(
+  Future<void> _handleDelete() async {
+    final shouldDelete = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Note'),
-        content: const Text('Are you sure you want to delete this note?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+      builder:
+          (context) => DeleteConfirmation(
+            title: 'Delete Note',
+            content: 'Are you sure you want to delete this note?',
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
     );
 
-    if (confirmed == true) {
-      if (context.mounted) {
+    if (mounted && shouldDelete == true) {
+      try {
         context.read<NotesBloc>().add(DeleteNoteEvent(widget.note!.id));
-        Navigator.pop(context); // Return to previous screen
+        Navigator.popUntil(context, (route) => route.isFirst);
+        AlertService.showSuccess(context, "Note deleted");
+      } catch (e) {
+        AlertService.showError(context, "Failed to delete note");
       }
     }
   }
@@ -75,13 +67,14 @@ class _NoteScreenState extends State<NoteScreen> {
     }
 
     if (_selectedCategoryId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a category')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select a category')));
       return;
     }
 
-    final note = widget.note?.copyWith(
+    final note =
+        widget.note?.copyWith(
           title: _titleController.text,
           content: _contentController.text,
           categoryId: _selectedCategoryId,
@@ -110,12 +103,9 @@ class _NoteScreenState extends State<NoteScreen> {
           if (widget.note != null)
             IconButton(
               icon: const Icon(Icons.delete),
-              onPressed: _showDeleteConfirmation,
+              onPressed: _handleDelete,
             ),
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: _saveNote,
-          ),
+          IconButton(icon: const Icon(Icons.check), onPressed: _saveNote),
         ],
       ),
       body: Padding(
@@ -141,19 +131,19 @@ class _NoteScreenState extends State<NoteScreen> {
                     labelText: 'Category',
                     border: OutlineInputBorder(),
                   ),
-                  items: state.categories.map((category) {
-                    return DropdownMenuItem(
-                      value: category.id,
-                      child: Text(category.name),
-                    );
-                  }).toList(),
+                  items:
+                      state.categories.map((category) {
+                        return DropdownMenuItem(
+                          value: category.id,
+                          child: Text(category.name),
+                        );
+                      }).toList(),
                   onChanged: (value) {
                     setState(() {
                       _selectedCategoryId = value;
                     });
                   },
                 );
-                
               },
             ),
             const SizedBox(height: 16),
@@ -175,4 +165,4 @@ class _NoteScreenState extends State<NoteScreen> {
       ),
     );
   }
-} 
+}
