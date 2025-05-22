@@ -1,4 +1,4 @@
-import '../../models/category.dart';
+import '../../data/models/category.dart';
 
 abstract class CategoriesEvent { }
 

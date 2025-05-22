@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_note/blocs/categories/categories_bloc.dart';
 import 'package:mera_note/blocs/notes/notes_bloc.dart';
-import 'package:mera_note/models/note.dart';
+import 'package:mera_note/data/models/note.dart';
 import 'package:mera_note/screens/note_screen.dart';
 
 class NoteCard extends StatelessWidget {

@@ -6,7 +6,7 @@ import 'package:mera_note/blocs/notes/notes_bloc.dart';
 import 'package:mera_note/blocs/notes/notes_event.dart';
 import 'package:mera_note/blocs/notes/notes_state.dart';
 import 'package:mera_note/helpers/hex_color_helper.dart';
-import 'package:mera_note/models/category.dart';
+import 'package:mera_note/data/models/category.dart';
 import 'package:mera_note/widgets/category_form.dart';
 
 class CategorySection extends StatefulWidget {

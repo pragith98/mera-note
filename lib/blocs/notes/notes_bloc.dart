@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../models/note.dart';
+import '../../data/models/note.dart';
 import 'notes_event.dart';
 import 'notes_state.dart';
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'models/note.dart';
-import 'models/category.dart';
+import 'data/models/note.dart';
+import 'data/models/category.dart';
 import 'blocs/notes/notes_bloc.dart';
 import 'blocs/notes/notes_event.dart';
 import 'blocs/categories/categories_bloc.dart';
@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Mera Note',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,

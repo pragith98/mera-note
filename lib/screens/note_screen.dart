@@ -7,7 +7,7 @@ import '../blocs/notes/notes_bloc.dart';
 import '../blocs/notes/notes_event.dart';
 import '../blocs/categories/categories_bloc.dart';
 import '../blocs/categories/categories_state.dart';
-import '../models/note.dart';
+import '../data/models/note.dart';
 
 class NoteScreen extends StatefulWidget {
   final Note? note;

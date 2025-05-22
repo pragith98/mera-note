@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../models/category.dart';
+import '../../data/models/category.dart';
 import 'categories_event.dart';
 import 'categories_state.dart';
 
