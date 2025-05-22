@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_note/blocs/categories/categories_bloc.dart';
+import 'package:mera_note/blocs/categories/categories_event.dart';
 import 'package:mera_note/blocs/categories/categories_state.dart';
 import 'package:mera_note/blocs/notes/notes_bloc.dart';
 import 'package:mera_note/blocs/notes/notes_event.dart';
@@ -17,6 +18,12 @@ class CategorySection extends StatefulWidget {
 }
 
 class _CategorySectionState extends State<CategorySection> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<CategoriesBloc>().add(LoadCategories());
+  }
+
   Future<void> _showCategoryDialog(
     BuildContext context,
     Category category,

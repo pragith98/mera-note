@@ -1,26 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../../data/models/category.dart';
+import 'package:mera_note/data/repositories/category_repository.dart';
 import 'categories_event.dart';
 import 'categories_state.dart';
 
 class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
-  final Box<Category> categoriesBox;
+  final CategoryRepository categoryRepository;
 
-  CategoriesBloc({required this.categoriesBox}) : super(CategoriesInitialState()) {
+  CategoriesBloc({required this.categoryRepository}) : super(CategoriesInitialState()) {
     on<LoadCategories>(_onLoadCategories);
     on<AddCategoryEvent>(_onAddCategory);
     on<UpdateCategoryEvent>(_onUpdateCategory);
     on<DeleteCategoryEvent>(_onDeleteCategory);
   }
 
-  void _onLoadCategories(
+  Future<void> _onLoadCategories(
     LoadCategories event, 
     Emitter<CategoriesState> emit
-  ) {
+  ) async {
     emit(CategoriesLoadingState());
     try {
-      final categories = categoriesBox.values.toList();
+      final categories = await categoryRepository.getAll();
       emit(CategoriesLoadedState(categories: categories));
     } catch (e) {
       emit(CategoriesErrorState(e.toString()));
@@ -34,8 +33,9 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     if (state is! CategoriesLoadedState) return;
     
     try {
-      await categoriesBox.put(event.category.id, event.category);
-      emit(CategoriesLoadedState(categories: categoriesBox.values.toList()));
+      await categoryRepository.create(event.category);
+      final categories = await categoryRepository.getAll();
+      emit(CategoriesLoadedState(categories: categories));
     } catch (e) {
       emit(CategoriesErrorState(e.toString()));
     }
@@ -48,8 +48,9 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     if (state is! CategoriesLoadedState) return;
 
     try {
-      await categoriesBox.put(event.category.id, event.category);
-      emit(CategoriesLoadedState(categories: categoriesBox.values.toList()));
+      await categoryRepository.update(event.category.id, event.category);
+      final categories = await categoryRepository.getAll();
+      emit(CategoriesLoadedState(categories: categories));
     } catch (e) {
       emit(CategoriesErrorState(e.toString()));
     }
@@ -62,8 +63,9 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     if (state is! CategoriesLoadedState) return;
     
     try {
-      await categoriesBox.delete(event.categoryId);
-      emit(CategoriesLoadedState(categories: categoriesBox.values.toList()));
+      await categoryRepository.delete(event.categoryId);
+      final categories = await categoryRepository.getAll();
+      emit(CategoriesLoadedState(categories: categories));
     } catch (e) {
       emit(CategoriesErrorState(e.toString()));
     }

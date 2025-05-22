@@ -1,13 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../../data/models/note.dart';
+import 'package:mera_note/data/repositories/note_repository.dart';
 import 'notes_event.dart';
 import 'notes_state.dart';
 
 class NotesBloc extends Bloc<NotesEvent, NotesState> {
-  final Box<Note> notesBox;
+  final NoteRepository noteRepository;
 
-  NotesBloc({required this.notesBox}) : super(NotesInitialState()) {
+  NotesBloc({required this.noteRepository}) : super(NotesInitialState()) {
     on<LoadNotesEvent>(_onLoadNotes);
     on<AddNoteEvent>(_onAddNote);
     on<UpdateNoteEvent>(_onUpdateNote);
@@ -15,13 +14,13 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     on<FilterNotesByCategoryEvent>(_onFilterNotesByCategory);
   }
 
-  void _onLoadNotes(
+  Future<void> _onLoadNotes(
     LoadNotesEvent event, 
     Emitter<NotesState> emit
-  ) {
+  ) async {
     emit(NotesLoadingState());
     try {
-      final notes = notesBox.values.toList();
+      final notes = await noteRepository.getAll();
       emit(NotesLoadedState(notes: notes));
     } catch (e) {
       emit(NotesErrorState(e.toString()));
@@ -35,8 +34,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     if (state is! NotesLoadedState) return;
 
     try {
-      await notesBox.put(event.note.id, event.note);
-      emit(NotesLoadedState(notes: notesBox.values.toList()));
+      await noteRepository.create(event.note);
+      final notes = await noteRepository.getAll();
+      emit(NotesLoadedState(notes: notes));
     } catch (e) {
       emit(NotesErrorState(e.toString()));
     }
@@ -49,8 +49,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     if (state is! NotesLoadedState) return;
 
     try {
-      await notesBox.put(event.note.id, event.note);
-      emit(NotesLoadedState(notes: notesBox.values.toList()));
+      await noteRepository.update(event.note.id, event.note);
+      final notes = await noteRepository.getAll();
+      emit(NotesLoadedState(notes: notes));
     } catch (e) {
       emit(NotesErrorState(e.toString()));
     }
@@ -63,24 +64,21 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     if (state is! NotesLoadedState) return;
 
     try {
-      await notesBox.delete(event.noteId);
-      emit(NotesLoadedState(notes: notesBox.values.toList()));
+      await noteRepository.delete(event.noteId);
+      final notes = await noteRepository.getAll();
+      emit(NotesLoadedState(notes: notes));
     } catch (e) {
       emit(NotesErrorState(e.toString()));
     }
   }
 
-  void _onFilterNotesByCategory(
+  Future<void> _onFilterNotesByCategory(
     FilterNotesByCategoryEvent event, 
     Emitter<NotesState> emit
-  ) {
+  ) async {
     if (state is! NotesLoadedState) return;
 
-    final filteredNotes = event.categoryId.isEmpty
-        ? notesBox.values.toList()
-        : notesBox.values
-            .where((note) => note.categoryId == event.categoryId)
-            .toList();
+    final filteredNotes = await noteRepository.filterByCategory(event.categoryId);
     emit(NotesLoadedState(
       notes: filteredNotes,
       selectedCategoryId: event.categoryId,
