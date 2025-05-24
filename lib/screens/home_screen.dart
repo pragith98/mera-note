@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mera_note/widgets/adsterra_banner_ad.dart';
 import 'package:mera_note/widgets/category_form.dart';
 import 'package:mera_note/widgets/category_section.dart';
 import 'package:mera_note/widgets/note_list.dart';
@@ -26,7 +27,13 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(children: [CategorySection(), Expanded(child: NoteList())]),
+      body: Column(
+        children: [
+          CategorySection(),
+          Expanded(child: NoteList()),
+          AdsterraBannerAd()
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed:
             () => Navigator.push(
