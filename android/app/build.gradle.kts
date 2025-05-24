@@ -5,6 +5,20 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Import Properties class
+import java.util.Properties
+
+// Load keystore properties
+val keystorePropertiesFile = file("../key.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        load(keystorePropertiesFile.inputStream())
+        println("Loaded key.properties: ${getProperty("storeFile")}")
+    } else {
+        println("Warning: key.properties not found at ${keystorePropertiesFile.absolutePath}")
+    }
+}
+
 android {
     namespace = "com.example.mera_note"
     compileSdk = flutter.compileSdkVersion
@@ -30,11 +44,22 @@ android {
         versionName = flutter.versionName
     }
 
+    // Add signingConfigs block
+    signingConfigs {
+        create("release") {
+            storeFile = keystoreProperties.getProperty("storeFile")?.let { file(it) }
+            storePassword = keystoreProperties.getProperty("storePassword")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
