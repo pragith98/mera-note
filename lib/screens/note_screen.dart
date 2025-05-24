@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_note/helpers/hex_color_helper.dart';
 import 'package:mera_note/services/alert_service.dart';
 import 'package:mera_note/widgets/delete_confirmation.dart';
+import 'package:mera_note/widgets/success_dialog.dart';
 import '../blocs/notes/notes_bloc.dart';
 import '../blocs/notes/notes_event.dart';
 import '../blocs/categories/categories_bloc.dart';
@@ -59,7 +60,18 @@ class _NoteScreenState extends State<NoteScreen> {
     }
   }
 
-  void _saveNote() {
+  Future<void> _createSuccessDialog() async {
+    await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => SuccessDialog(
+            title: 'Noted!',
+            content: _titleController.text,
+          ),
+    );
+  }
+
+  Future<void> _saveNote() async {
     if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Title and content cannot be empty')),
@@ -92,7 +104,13 @@ class _NoteScreenState extends State<NoteScreen> {
       context.read<NotesBloc>().add(UpdateNoteEvent(note));
     }
 
-    Navigator.pop(context);
+    await _createSuccessDialog();
+    
+    if (mounted) {
+      Navigator.pop(context);
+    }
+
+    return;
   }
 
   @override
@@ -143,7 +161,9 @@ class _NoteScreenState extends State<NoteScreen> {
                                 width: 24,
                                 height: 24,
                                 decoration: BoxDecoration(
-                                  color: HexColorHelper(category.color.toString()),
+                                  color: HexColorHelper(
+                                    category.color.toString(),
+                                  ),
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: Colors.grey.shade300,
